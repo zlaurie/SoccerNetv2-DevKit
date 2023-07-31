@@ -45,21 +45,11 @@ def main(args):
 
     # Create the dataloaders for train validation and test datasets
     if not args.test_only:
-        train_loader = torch.utils.data.DataLoader(dataset_Train,
-            batch_size=args.batch_size, shuffle=True,
-            num_workers=args.max_num_worker, pin_memory=True)
+        train_loader = torch.utils.data.DataLoader(dataset_Train,batch_size=args.batch_size, shuffle=True,num_workers=args.max_num_worker, pin_memory=True)
+        val_loader = torch.utils.data.DataLoader(dataset_Valid,batch_size=args.batch_size, shuffle=False,num_workers=args.max_num_worker, pin_memory=True)
+        val_metric_loader = torch.utils.data.DataLoader(dataset_Valid_metric,batch_size=1, shuffle=False,num_workers=1, pin_memory=True)
 
-        val_loader = torch.utils.data.DataLoader(dataset_Valid,
-            batch_size=args.batch_size, shuffle=False,
-            num_workers=args.max_num_worker, pin_memory=True)
-
-        val_metric_loader = torch.utils.data.DataLoader(dataset_Valid_metric,
-            batch_size=1, shuffle=False,
-            num_workers=1, pin_memory=True)
-
-    test_loader = torch.utils.data.DataLoader(dataset_Test,
-        batch_size=1, shuffle=False,
-        num_workers=1, pin_memory=True)
+    test_loader = torch.utils.data.DataLoader(dataset_Test,batch_size=1, shuffle=False, num_workers=1, pin_memory=True)
 
     # Training parameters
     if not args.test_only:

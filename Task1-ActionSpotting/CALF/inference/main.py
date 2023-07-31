@@ -26,7 +26,7 @@ def main(args):
 
 
     # Create the deep learning model
-    model = ContextAwareModel(weights=args.load_weights, input_size=args.num_features, num_classes=dataset_Test.num_classes, chunk_size=args.chunk_size*args.framerate, dim_capsule=args.dim_capsule, receptive_field=args.receptive_field*args.framerate, num_detections=dataset_Test.num_detections, framerate=args.framerate).cuda()
+    model = ContextAwareModel(weights=args.load_weights, input_size=args.num_features, num_classes=dataset_Test.num_classes, chunk_size=args.chunk_size*args.framerate, dim_capsule=args.dim_capsule, receptive_field=args.receptive_field*args.framerate, num_detections=dataset_Test.num_detections, framerate=args.framerate).cpu()
     # Logging information about the model
     logging.info(model)
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -34,14 +34,12 @@ def main(args):
     logging.info("Total number of parameters: " + str(total_params))
 
 
-    test_loader = torch.utils.data.DataLoader(dataset_Test,
-        batch_size=1, shuffle=False,
-        num_workers=1, pin_memory=True)
+    test_loader = torch.utils.data.DataLoader(dataset_Test,batch_size=1, shuffle=False,num_workers=1, pin_memory=True)
 
     
     # Load the best model and compute its performance
-    checkpoint = torch.load(os.path.join("models", args.model_name, "model.pth.tar"))
-    model.load_state_dict(checkpoint['state_dict'])
+    #checkpoint = torch.load(os.path.join("models", args.model_name, "model.pth.tar"))
+    #model.load_state_dict(checkpoint['state_dict'])
 
     test(test_loader, model=model, model_name=args.model_name, save_predictions=True)
 

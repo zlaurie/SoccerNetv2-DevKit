@@ -21,8 +21,7 @@ def test(dataloader,model, model_name, save_predictions=False):
     end = time.time()
     with tqdm(enumerate(dataloader), total=len(dataloader), ncols=120) as t:
         for i, (feat_half1, size) in t:
-
-            feat_half1 = feat_half1.cuda().squeeze(0)
+            feat_half1 = feat_half1.cpu().squeeze(0)
 
 
             feat_half1=feat_half1.unsqueeze(1)

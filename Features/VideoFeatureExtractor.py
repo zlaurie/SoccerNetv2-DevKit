@@ -94,7 +94,7 @@ class VideoFeatureExtractor():
             logging.info(f"frames {frames.shape}, fps={frames.shape[0]/duration}")
 
             # predict the features from the frames (adjust batch size for smaller GPU)
-            features = self.model.predict(frames, batch_size=64, verbose=1)
+            features = self.model.predict(frames, batch_size=32, verbose=1)
 
             logging.info(f"features {features.shape}, fps={features.shape[0]/duration}")
 
@@ -180,38 +180,19 @@ if __name__ == "__main__":
                         
     args = parser.parse_args()
     # print(args)
-    logging.basicConfig(
-        level=getattr(logging, args.loglevel.upper(), None),
-        format="%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s",
-        handlers=[
-            logging.StreamHandler()
-        ])
+    logging.basicConfig(level=getattr(logging, args.loglevel.upper(), None),format="%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s",handlers=[logging.StreamHandler()])
 
 
     if args.GPU >= 0:
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
         os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
 
-    myFeatureExtractor = VideoFeatureExtractor(
-        feature=args.features,
-        back_end=args.back_end,
-        transform=args.transform,
-        grabber=args.grabber,
-        FPS=args.FPS)
+    myFeatureExtractor = VideoFeatureExtractor(feature=args.features,back_end=args.back_end,transform=args.transform,grabber=args.grabber,FPS=args.FPS)
 
-    myFeatureExtractor.extractFeatures(path_video_input=args.path_video,
-                                       path_features_output=args.path_features,
-                                       start=args.start,
-                                       duration=args.duration,
-                                       overwrite=args.overwrite)
+    myFeatureExtractor.extractFeatures(path_video_input=args.path_video,path_features_output=args.path_features,start=args.start,duration=args.duration,overwrite=args.overwrite)
 
     if args.PCA is not None or args.PCA_scaler is not None:
-        myPCAReducer = PCAReducer(pca_file=args.PCA,
-                                  scaler_file=args.PCA_scaler)
+        myPCAReducer = PCAReducer(pca_file=args.PCA,scaler_file=args.PCA_scaler)
 
-        myPCAReducer.reduceFeatures(input_features=args.path_features,
-                                    output_features=args.path_features,
-                                    overwrite=args.overwrite)
+        myPCAReducer.reduceFeatures(input_features=args.path_features,output_features="Task1-ActionSpotting/inference/outputs/features_.npy",overwrite=args.overwrite)
 
-# import numpy as np
-# np.load("/media/giancos/Football/SoccerNet/england_epl/2014-2015/2015-02-21 - 18-00 Chelsea 1 - 1 Burnley/BUTTA.npy") - np.load("/media/giancos/Football/SoccerNet/england_epl/2014-2015/2015-02-21 - 18-00 Chelsea 1 - 1 Burnley/1_ResNET_TF2.npy")
