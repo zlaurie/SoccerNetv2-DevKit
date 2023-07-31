@@ -21,7 +21,7 @@ class Model(nn.Module):
         super(Model, self).__init__()
 
         self.input_size = input_size
-        self.num_classes = num_classes
+        self.num_classes = numodel.pym_classes
         self.chunk_size = chunk_size
         self.framerate = framerate
         self.pool = pool
