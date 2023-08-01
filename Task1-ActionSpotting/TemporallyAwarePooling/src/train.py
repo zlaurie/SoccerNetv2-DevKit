@@ -336,18 +336,12 @@ def testSpotting(dataloader, model, model_name, overwrite=True, NMS_window=30, N
                         zipobj.write(fn, fn[rootlen:])
 
         # zip folder
-        zipResults(zip_path = output_results,
-                target_dir = os.path.join("models", model_name, output_folder),
-                filename="results_spotting.json")
+        zipResults(zip_path = output_results,target_dir = os.path.join("models", model_name, output_folder),filename="results_spotting.json")
 
     if split == "challenge": 
         print("Visit eval.ai to evalaute performances on Challenge set")
         return None
         
-    results =  evaluate(SoccerNet_path=dataloader.dataset.path, 
-                 Predictions_path=output_results,
-                 split="test",
-                 prediction_file="results_spotting.json", 
-                 version=dataloader.dataset.version)
+    results =  evaluate(SoccerNet_path=dataloader.dataset.path, Predictions_path=output_results,split="test", prediction_file="results_spotting.json", version=dataloader.dataset.version)
 
     return results

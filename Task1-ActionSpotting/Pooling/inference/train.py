@@ -18,10 +18,6 @@ def test(dataloader,model, model_name, NMS_window=30, NMS_threshold=0.5, save_pr
 
     model.eval()
 
-    count_visible = torch.FloatTensor([0.0] * dataloader.dataset.num_classes)
-    count_unshown = torch.FloatTensor([0.0] * dataloader.dataset.num_classes)
-    count_all = torch.FloatTensor([0.0] * dataloader.dataset.num_classes)
-
     with tqdm(enumerate(dataloader), total=len(dataloader), ncols=120) as t:
         for i, (feat_half1, size) in t:
             feat_half1 = feat_half1.cpu().squeeze(0)

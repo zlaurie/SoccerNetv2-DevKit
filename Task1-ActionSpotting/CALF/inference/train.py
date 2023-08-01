@@ -40,7 +40,7 @@ def test(dataloader,model, model_name, save_predictions=False):
     # Transformation to numpy for evaluation
     detections_numpy = list()
     segmentation_numpy = list()
-    for segmentation, detection in zip(segmentation_predictions,spotting_predictions):
+    for segmentation, detection in zip(segmentation_predictions, spotting_predictions):
         segmentation_numpy.append(segmentation.numpy())
         detections_numpy.append(NMS(detection.numpy(), 20*model.framerate))
 

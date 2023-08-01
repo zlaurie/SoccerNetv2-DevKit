@@ -21,10 +21,13 @@ def main(args):
 
     # create dataset
     if not args.test_only:
+        dataset_Train = SoccerNetClips(path=args.SoccerNet_path, features=args.features, split="train", framerate=args.framerate, chunk_size=args.chunk_size*args.framerate, receptive_field=args.receptive_field*args.framerate, chunks_per_epoch=args.chunks_per_epoch)
+
         dataset_Train = SoccerNetClips(path=args.SoccerNet_path, features=args.features, split=args.split_train, version=args.version, framerate=args.framerate, window_size=args.window_size)
         dataset_Valid = SoccerNetClips(path=args.SoccerNet_path, features=args.features, split=args.split_valid, version=args.version, framerate=args.framerate, window_size=args.window_size)
         dataset_Valid_metric  = SoccerNetClips(path=args.SoccerNet_path, features=args.features, split=args.split_valid, version=args.version, framerate=args.framerate, window_size=args.window_size)
     dataset_Test  = SoccerNetClipsTesting(path=args.SoccerNet_path, features=args.features, split=args.split_test, version=args.version, framerate=args.framerate, window_size=args.window_size)
+
 
     if args.feature_dim is None:
         args.feature_dim = dataset_Test[0][1].shape[-1]
@@ -42,27 +45,15 @@ def main(args):
 
     # create dataloader
     if not args.test_only:
-        train_loader = torch.utils.data.DataLoader(dataset_Train,
-            batch_size=args.batch_size, shuffle=True,
-            num_workers=args.max_num_worker, pin_memory=True)
-
-        val_loader = torch.utils.data.DataLoader(dataset_Valid,
-            batch_size=args.batch_size, shuffle=False,
-            num_workers=args.max_num_worker, pin_memory=True)
-
-        val_metric_loader = torch.utils.data.DataLoader(dataset_Valid_metric,
-            batch_size=args.batch_size, shuffle=False,
-            num_workers=args.max_num_worker, pin_memory=True)
+        train_loader = torch.utils.data.DataLoader(dataset_Train,batch_size=args.batch_size, shuffle=True,num_workers=args.max_num_worker, pin_memory=True)
+        val_loader = torch.utils.data.DataLoader(dataset_Valid,batch_size=args.batch_size, shuffle=False,num_workers=args.max_num_worker, pin_memory=True)
+        val_metric_loader = torch.utils.data.DataLoader(dataset_Valid_metric,batch_size=args.batch_size, shuffle=False,num_workers=args.max_num_worker, pin_memory=True)
 
 
     # training parameters
     if not args.test_only:
         criterion = NLLLoss()
-        optimizer = torch.optim.Adam(model.parameters(), lr=args.LR, 
-                                    betas=(0.9, 0.999), eps=1e-08, 
-                                    weight_decay=0, amsgrad=False)
-
-
+        optimizer = torch.optim.Adam(model.parameters(), lr=args.LR, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=False)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', verbose=True, patience=args.patience)
 
         # start training
@@ -128,6 +119,8 @@ if __name__ == '__main__':
     parser.add_argument('--feature_dim', required=False, type=int,   default=None,     help='Number of input features' )
     parser.add_argument('--evaluation_frequency', required=False, type=int,   default=10,     help='Number of chunks per epoch' )
     parser.add_argument('--framerate', required=False, type=int,   default=2,     help='Framerate of the input features' )
+    parser.add_argument('--chunk_size', required=False, type=int,   default=120,     help='Size of the chunk (in seconds)' )
+
     parser.add_argument('--window_size', required=False, type=int,   default=15,     help='Size of the chunk (in seconds)' )
     parser.add_argument('--pool',       required=False, type=str,   default="NetVLAD++", help='How to pool' )
     parser.add_argument('--vocab_size',       required=False, type=int,   default=64, help='Size of the vocabulary for NetVLAD' )

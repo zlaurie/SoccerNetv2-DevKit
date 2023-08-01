@@ -137,6 +137,20 @@ class PCAReducer():
         np.save(output_features, feat)
 
 
+    def reduceFeatures_nopca(self, input_features, output_features, overwrite=False):
+        logging.info(f"reducing features {input_features}")
+
+        if os.path.exists(output_features) and not overwrite:
+            logging.info(
+                "Features already exists, use overwrite=True to overwrite them. Exiting.")
+            return
+        feat = np.load(input_features)
+        if self.average is not None:
+            feat = feat - self.average
+        p = self.pca.transform(feat)
+        np.save(output_features, feat)
+
+
 if __name__ == "__main__":
     # Argument parser
     parser = argparse.ArgumentParser(
